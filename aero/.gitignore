@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.mp4
+horizontal/frames/
+vertical/frames/
+exports/
+ads/dist/
+ads/out/
+ads/stills/

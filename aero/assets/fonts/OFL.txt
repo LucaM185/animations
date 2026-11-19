@@ -1,0 +1,5 @@
+Archivo copyright 2019 The Archivo Project Authors (https://github.com/Omnibus-Type/Archivo)
+IBM Plex Mono copyright 2017 IBM Corp.
+Both fonts are licensed under the SIL Open Font License, Version 1.1.
+The license text is at https://openfontlicense.org
+D-DIN Condensed Bold is the product typeface already used by AeroHUD; the woff2 is a web subset of that file.

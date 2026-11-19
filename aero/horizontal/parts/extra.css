@@ -1,0 +1,5 @@
+.g{color:var(--orange);text-shadow:0 0 30px rgba(110,255,90,.45)}
+.row{position:absolute;left:0;right:0}
+.ttl{font-family:var(--sans);font-weight:900;font-stretch:112%;letter-spacing:-.01em;line-height:.9;white-space:nowrap;color:var(--ink);text-shadow:0 0 28px rgba(130,185,255,.3)}
+.dsc{font:500 24px/1 var(--mono);color:rgba(190,220,255,.78);letter-spacing:.02em;white-space:nowrap}
+.idx{font:600 20px/1 var(--mono);letter-spacing:.2em;color:rgba(110,255,90,.9)}

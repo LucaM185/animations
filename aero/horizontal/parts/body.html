@@ -1,0 +1,76 @@
+<div id="wrap"><div id="stage">
+  <canvas id="grid"></canvas>
+  <div id="cam">
+    <canvas id="draw"></canvas>
+
+    <div class="scene" id="s1">
+      <div class="abs kick" id="s1k" style="left:150px;top:182px">e se il tuo aereo potesse sembrare</div>
+      <div class="abs big" id="s1a" data-fit="1000" style="left:138px;top:236px;font-size:170px">UN FIGHTER</div>
+      <div class="abs big g" id="s1b" data-fit="900" style="left:142px;top:404px;font-size:170px">JET?</div>
+      <div class="abs kick" id="s1c" style="left:150px;top:700px;font-size:54px">la stessa consapevolezza dei caccia,</div>
+      <div class="abs kick" id="s1d" style="left:150px;top:772px;font-size:54px">su aerei di <span class="b">tutti i giorni</span></div>
+    </div>
+
+    <div class="scene" id="s2">
+      <div class="grp" id="s2A">
+        <div class="abs kick" id="s2k" style="left:150px;top:118px">negli aerei leggeri lo sguardo è</div>
+        <div class="abs big" id="s2a" data-fit="1500" style="left:142px;top:174px;font-size:150px">SUL PANNELLO</div>
+      </div>
+      <div class="grp" id="s2B">
+        <div class="abs kick" id="s2k2" style="left:150px;top:118px">con AERO resta</div>
+        <div class="abs big g" id="s2b" data-fit="1600" style="left:142px;top:174px;font-size:150px">SULL'ORIZZONTE</div>
+      </div>
+    </div>
+
+    <div class="scene" id="s3">
+      <div class="abs kick" id="s3k" style="left:150px;top:126px">un'unità standalone,</div>
+      <div class="abs big" id="s3a" data-fit="1000" style="left:142px;top:184px;font-size:170px">PLUG &amp; PLAY</div>
+      <div class="abs stroke" id="s3b" style="left:150px;top:372px;font-size:60px">con sensori e GPS dedicati</div>
+    </div>
+
+    <div class="scene" id="s4">
+      <div class="abs kick" id="s4k" style="left:150px;top:112px">ciò che ti serve,</div>
+      <div class="abs big" id="s4a" data-fit="1500" style="left:142px;top:168px;font-size:130px">QUANDO TI SERVE</div>
+      <div class="abs stroke" id="s4b" style="left:150px;top:316px;font-size:60px">dove vuoi tu</div>
+    </div>
+
+    <div class="scene" id="s5">
+      <div class="abs kick" id="s5k" style="left:150px;top:112px">pianifichi nell'app,</div>
+      <div class="abs big" id="s5a" data-fit="1600" style="left:142px;top:168px;font-size:120px">VOLI SENZA PENSIERI</div>
+      <div class="abs stroke" id="s5b" style="left:150px;top:304px;font-size:56px">come CarPlay, per il tuo aereo</div>
+    </div>
+
+    <div class="scene" id="s6">
+      <div id="s6rows"></div>
+    </div>
+
+    <div class="scene" id="s7">
+      <div class="abs big" id="s7a" data-fit="1000" style="left:132px;top:330px;font-size:300px;letter-spacing:.06em">AERO</div>
+      <div class="abs stroke" id="s7b" data-fit="1000" style="left:150px;top:640px;font-size:84px">rethinking flight</div>
+      <div class="abs kick" id="s7k" style="left:152px;top:250px">AeroHUD</div>
+    </div>
+
+    <canvas id="over"></canvas>
+  </div>
+
+  <div id="flash"><div class="t" style="left:84px;top:60px" id="flTag">PLATE 00</div><div class="w" id="flWord"></div><div class="t" style="right:84px;bottom:56px">0.12</div></div>
+
+  <div id="hud">
+    <div class="reg" style="left:48px;top:40px;border-left-width:1.5px;border-top-width:1.5px"></div>
+    <div class="reg" style="right:48px;top:40px;border-right-width:1.5px;border-top-width:1.5px"></div>
+    <div class="reg" style="left:48px;bottom:40px;border-left-width:1.5px;border-bottom-width:1.5px"></div>
+    <div class="reg" style="right:48px;bottom:40px;border-right-width:1.5px;border-bottom-width:1.5px"></div>
+    <div class="h" id="hudScene" style="left:84px;top:52px">SC 01</div>
+    <div class="h" id="hudTime" style="right:84px;top:52px">00:00:00</div>
+    <div class="h" style="left:84px;bottom:46px">aero hud — hud-001 · rev a</div>
+    <div class="h" id="hudFrame" style="right:84px;bottom:46px">F 0000</div>
+  </div>
+
+  <canvas id="fx"></canvas>
+</div></div>
+
+<div id="ctl">
+  <button id="bPlay">❚❚</button>
+  <input id="scrub" type="range" min="0" max="1" step="0.001" value="0">
+  <span id="tLabel">0.00</span>
+</div>

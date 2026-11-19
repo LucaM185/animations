@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aero — Rethinking flight</title>
+<meta name="description" content="AeroHUD: un head-up display da caccia per aerei di tutti i giorni. Plug and play, navigazione, aggiornamenti OTA. Scorri per vedere come funziona.">
+<meta name="theme-color" content="#04070d">
+<meta property="og:title" content="Aero — Rethinking flight">
+<meta property="og:description" content="Un HUD da caccia, su aerei di tutti i giorni.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucam185.github.io/Aero/">
+<link rel="canonical" href="https://lucam185.github.io/Aero/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2304070d'/%3E%3Cpath d='M5 24L16 6l11 18-11-5z' fill='none' stroke='%236eff5a' stroke-width='2.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/Archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/IBMPlexMono-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/IBMPlexMono-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/IBMPlexMono-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/D-DINCondensed-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* parte il download dell'animazione giusta prima del resto della pagina */
+document.write('<link rel="preload" href="' + (innerWidth / innerHeight < 0.9 ? 'vertical' : 'horizontal') + '.html?embed=1" as="document">');
+</script>
+<style>
+:root{
+  --bg:#04070d; --ink:#eef4ff; --muted:rgba(190,220,255,.62); --line:rgba(175,212,255,.28);
+  --blue:#4ea8ff; --green:#6eff5a;
+  --mono:"IBM Plex Mono",ui-monospace,monospace; --sans:"Archivo",system-ui,sans-serif;
+  --len:960vh;               /* lunghezza dello scroll della storia */
+}
+@font-face{font-family:Archivo;font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url('assets/fonts/Archivo-latin.woff2') format('woff2')}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url('assets/fonts/IBMPlexMono-400.woff2') format('woff2')}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url('assets/fonts/IBMPlexMono-500.woff2') format('woff2')}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url('assets/fonts/IBMPlexMono-600.woff2') format('woff2')}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:700;font-display:swap;src:url('assets/fonts/IBMPlexMono-700.woff2') format('woff2')}
+*{box-sizing:border-box}
+html{background:var(--bg);color:var(--ink);color-scheme:dark;scroll-behavior:auto}
+body{margin:0;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---- storia a scroll ---- */
+#story{position:relative;height:calc(var(--len) + 100vh)}
+@supports (height:100dvh){#story{height:calc(var(--len) + 100dvh)}}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--bg)}
+@supports (height:100dvh){.stage{height:100dvh}}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg);opacity:0;transition:opacity .15s}
+.stage iframe.on{opacity:1}
+
+/* ---- loader ---- */
+#loader{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--bg);transition:opacity .6s .1s,visibility 0s .7s}
+#loader.done{opacity:0;visibility:hidden}
+#loader b{font:900 clamp(56px,12vw,140px)/1 var(--sans);font-stretch:115%;letter-spacing:.06em;color:var(--ink);text-shadow:0 0 36px rgba(130,185,255,.35)}
+#loader i{display:block;width:min(260px,50vw);height:2px;background:var(--line);overflow:hidden}
+#loader i::after{content:"";display:block;height:100%;width:40%;background:var(--green);box-shadow:0 0 12px var(--green);animation:ld 1.1s ease-in-out infinite}
+@keyframes ld{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+#loader span{font:500 12px var(--mono);letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+
+/* ---- rail dei capitoli ---- */
+#rail{position:fixed;right:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:14px;padding:6px;opacity:0;transition:opacity .4s}
+#rail.on{opacity:1}
+#rail.off{opacity:0;pointer-events:none}
+#rail button{all:unset;position:relative;display:block;width:12px;height:12px;cursor:pointer}
+#rail button::before{content:"";position:absolute;inset:3px;border:1.5px solid var(--line);border-radius:50%;background:transparent;transition:.25s}
+#rail button.past::before{background:rgba(175,212,255,.45);border-color:transparent}
+#rail button.cur::before{inset:1px;background:var(--green);border-color:transparent;box-shadow:0 0 14px var(--green)}
+#rail button span{position:absolute;right:26px;top:50%;transform:translate(6px,-50%);white-space:nowrap;font:600 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);background:rgba(4,7,13,.82);border:1px solid var(--line);padding:6px 9px;opacity:0;pointer-events:none;transition:.2s}
+#rail button:hover span,#rail button:focus-visible span,#rail button.flash span{opacity:1;transform:translate(0,-50%)}
+@media (max-width:700px){#rail{right:4px;gap:11px}#rail button{width:10px;height:10px}#rail button span{right:20px;font-size:10px}}
+#rail button:focus-visible::before{outline:2px solid var(--blue);outline-offset:2px}
+
+/* ---- hint + controlli ---- */
+#hint{position:fixed;left:50%;bottom:max(26px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;font:600 11px var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);pointer-events:none;transition:opacity .4s}
+#hint::after{content:"";width:1px;height:34px;background:linear-gradient(var(--green),transparent);animation:dr 1.6s ease-in-out infinite;transform-origin:top}
+@keyframes dr{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+#hint.hide{opacity:0}
+#play{position:fixed;left:clamp(14px,2vw,28px);bottom:max(22px,env(safe-area-inset-bottom));z-index:10;all:unset;box-sizing:border-box;cursor:pointer;font:600 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink);background:rgba(4,7,13,.78);border:1px solid var(--line);padding:11px 15px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(6px);transition:.2s;opacity:0}
+#play.on{opacity:1}
+#play:hover{border-color:var(--green);color:var(--green)}
+#play:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#play.off{opacity:0;pointer-events:none}
+#play svg{width:12px;height:12px;fill:currentColor}
+
+/* ---- chiusura ---- */
+#outro{position:relative;z-index:5;min-height:100vh;display:flex;flex-direction:column;justify-content:center;gap:34px;padding:clamp(70px,12vh,140px) clamp(24px,8vw,140px);background:
+  radial-gradient(900px 500px at 80% 20%,rgba(78,168,255,.14),transparent 70%),
+  radial-gradient(700px 420px at 10% 90%,rgba(110,255,90,.07),transparent 70%),var(--bg);border-top:1px solid var(--line)}
+#outro .k{font:600 12px var(--mono);letter-spacing:.3em;color:var(--green);text-transform:uppercase}
+#outro h2{margin:0;font:900 clamp(48px,9vw,150px)/.92 var(--sans);font-stretch:112%;letter-spacing:-.01em;text-shadow:0 0 40px rgba(130,185,255,.3)}
+#outro h2 em{font-style:normal;color:var(--green);text-shadow:0 0 34px rgba(110,255,90,.4)}
+#outro p{margin:0;max-width:34ch;font:500 clamp(18px,2vw,26px)/1.45 var(--sans);color:rgba(220,235,255,.82)}
+.btns{display:flex;flex-wrap:wrap;gap:14px}
+.btn{font:700 13px var(--mono);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;color:#04101f;background:var(--green);padding:16px 22px;transition:.2s;box-shadow:0 0 0 rgba(110,255,90,0)}
+.btn:hover{box-shadow:0 0 28px rgba(110,255,90,.55);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--blue);box-shadow:0 0 22px rgba(78,168,255,.35)}
+.btn:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);max-width:760px}
+.specs div{background:var(--bg);padding:16px 18px}
+.specs dt{font:600 11px var(--mono);letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
+.specs dd{margin:0;font:500 15px var(--mono);color:var(--ink)}
+footer{padding:26px clamp(24px,8vw,140px);font:500 12px var(--mono);letter-spacing:.14em;color:var(--muted);border-top:1px solid var(--line);background:var(--bg);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media (prefers-reduced-motion:reduce){#hint::after,#loader i::after{animation:none}}
+</style>
+</head>
+<body>
+<noscript><p style="padding:24px;font-family:sans-serif">Questa pagina usa JavaScript per l'animazione. Aero — un HUD da caccia, su aerei di tutti i giorni. <a href="https://lucam185.github.io/Aero/">lucam185.github.io/Aero</a></p></noscript>
+
+<div id="loader" role="status"><b>AERO</b><i></i><span>caricamento</span></div>
+
+<main id="story" aria-label="Aero — storia a scorrimento">
+  <div class="stage"><iframe id="frame" title="Aero — animazione, controllata dallo scroll" tabindex="-1" aria-hidden="true"></iframe></div>
+  <div class="sr-only">
+    <h1>Aero — Rethinking flight</h1>
+    <ol>
+      <li>E se il tuo aereo potesse sembrare un fighter jet? La stessa consapevolezza dei caccia, su aerei di tutti i giorni.</li>
+      <li>Negli aerei leggeri lo sguardo è sul pannello. Con Aero resta sull'orizzonte: head-up.</li>
+      <li>Un'unità standalone, plug and play, con sensori e GPS dedicati.</li>
+      <li>Ciò che ti serve, quando ti serve, dove vuoi tu: velocità, rotta, quota, variometro, strada verso il waypoint e orizzonte.</li>
+      <li>Pianifichi nell'app, voli senza pensieri: come CarPlay, per il tuo aereo. Aggiornamenti OTA.</li>
+      <li>Progettato per te: plug and play, navigazione, HUD cristallino, ecosistema.</li>
+      <li>Aero, rethinking flight.</li>
+    </ol>
+  </div>
+</main>
+
+<nav id="rail" aria-label="Capitoli"></nav>
+<div id="hint" aria-hidden="true">Scorri</div>
+<button id="play" type="button" aria-label="Riproduci automaticamente"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg><span>Riproduci</span></button>
+
+<section id="outro" aria-labelledby="outro-t">
+  <div class="k">AeroHUD · HUD-001</div>
+  <h2 id="outro-t">Rethinking<br><em>flight.</em></h2>
+  <p>Un head-up display da caccia, su aerei di tutti i giorni. Plug and play, navigazione come CarPlay, aggiornamenti OTA.</p>
+  <dl class="specs">
+    <div><dt>Installazione</dt><dd>plug and play</dd></div>
+    <div><dt>Sensori</dt><dd>suite dedicata + GPS</dd></div>
+    <div><dt>App</dt><dd>percorso, waypoint, OTA</dd></div>
+    <div><dt>Giorno · notte</dt><dd>al meglio di notte</dd></div>
+  </dl>
+  <div class="btns">
+    <a class="btn" href="#story" id="replay">Dall'inizio</a>
+  </div>
+</section>
+<footer><span>© 2026 AeroHUD</span><span>HUD-001 · rev A</span></footer>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const story = $('story'), frame = $('frame'), rail = $('rail'), hint = $('hint'), playBtn = $('play'), loader = $('loader');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isPortrait = () => innerWidth / innerHeight < 0.9;
+
+  let total = 43, scenes = [], ready = false, orient = null;
+  const BASE = 4.2;                 // il tempo (s) a cui la scena 1 è già composta: da qui parte lo scroll
+  let cur = 0, target = 0, sent = -1, playing = false, lastT = performance.now(), intro = !reduce && scrollY < 10, lastCh = -1;
+  const tOfP = p => BASE + p * (total - 0.001 - BASE);
+  const pOfT = t => Math.min(1, Math.max(0, (t - BASE) / (total - 0.001 - BASE)));
+
+  const maxScroll = () => Math.max(1, story.offsetHeight - innerHeight);
+  const progress = () => Math.min(1, Math.max(0, (scrollY - story.offsetTop) / maxScroll()));
+  const post = t => { try { frame.contentWindow.postMessage({ t }, '*'); } catch (e) {} };
+
+  function load() {
+    const o = isPortrait() ? 'vertical' : 'horizontal';
+    if (o === orient) return;
+    orient = o; ready = false; sent = -1;
+    frame.classList.remove('on');
+    frame.src = o + '.html?embed=1';
+  }
+
+  addEventListener('message', e => {
+    if (e.source !== frame.contentWindow || !e.data || !e.data.aeroReady) return;
+    ready = true; total = e.data.total; scenes = e.data.scenes || [];
+    buildRail(); frame.classList.add('on'); rail.classList.add('on'); playBtn.classList.add('on');
+    loader.classList.add('done');
+    target = tOfP(progress()); cur = intro ? 0 : target; post(cur); sent = cur; if (!intro) markRail(cur);
+  });
+
+  function buildRail() {
+    rail.innerHTML = '';
+    scenes.forEach((s, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('aria-label', 'Vai a: ' + s.name);
+      b.innerHTML = '<span>' + String(i + 1).padStart(2, '0') + ' · ' + s.name + '</span>';
+      b.onclick = () => { intro = false; scrollTo({ top: story.offsetTop + pOfT(s.start + 0.05) * maxScroll(), behavior: reduce ? 'auto' : 'smooth' }); };
+      rail.appendChild(b);
+    });
+  }
+  function markRail(t) {
+    const bs = rail.children; let ci = 0;
+    scenes.forEach((s, i) => { if (t >= s.start) ci = i; });
+    for (let i = 0; i < bs.length; i++) { bs[i].classList.toggle('cur', i === ci); bs[i].classList.toggle('past', i < ci); }
+    if (ci !== lastCh && bs[ci]) { lastCh = ci; for (const x of bs) x.classList.remove('flash'); clearTimeout(markRail.tm); bs[ci].classList.add('flash'); markRail.tm = setTimeout(() => bs[ci] && bs[ci].classList.remove('flash'), 1700); }
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    playBtn.querySelector('span').textContent = p ? 'Pausa' : 'Riproduci';
+    playBtn.querySelector('svg').innerHTML = p ? '<path d="M2 1h3v10H2zM7 1h3v10H7z"/>' : '<path d="M2 1l9 5-9 5z"/>';
+    playBtn.setAttribute('aria-label', p ? 'Metti in pausa' : 'Riproduci automaticamente');
+  }
+  playBtn.onclick = () => {
+    if (!playing && progress() > 0.995) scrollTo({ top: story.offsetTop, behavior: 'auto' });
+    setPlaying(!playing);
+  };
+  $('replay').onclick = e => { e.preventDefault(); setPlaying(false); scrollTo({ top: story.offsetTop, behavior: reduce ? 'auto' : 'smooth' }); };
+  // lo scroll manuale ferma la riproduzione automatica
+  ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { if (playing) setPlaying(false); }, { passive: true }));
+  addEventListener('keydown', e => { if (e.code === 'Space' && !/^(A|BUTTON|INPUT)$/.test(document.activeElement.tagName) && progress() < 1) { e.preventDefault(); setPlaying(!playing); } });
+
+  function tick(now) {
+    const dt = Math.min(.1, (now - lastT) / 1000); lastT = now;
+    if (playing) {
+      const sy = scrollY + maxScroll() / (total - BASE) * dt;   // 1x: la timeline va a tempo reale
+      scrollTo({ top: sy, behavior: 'auto' });
+      if (progress() >= 0.995) setPlaying(false);
+    }
+    const p = progress();
+    target = tOfP(p);
+    if (intro && ready) {                                      // breve intro a tempo reale, poi prende il controllo lo scroll
+      cur += dt; if (cur >= BASE || p > 0.002) intro = false;
+    } else if (!intro) {
+      cur = reduce ? target : cur + (target - cur) * Math.min(1, dt * 9);
+      if (Math.abs(cur - target) < 0.004) cur = target;
+    }
+    if (ready && Math.abs(cur - sent) > 0.0015) { post(cur); sent = cur; markRail(cur); }
+    const inStory = scrollY < story.offsetTop + story.offsetHeight - innerHeight * 0.6;
+    rail.classList.toggle('off', !inStory); playBtn.classList.toggle('off', !inStory);
+    hint.classList.toggle('hide', scrollY > 40 || intro);
+    requestAnimationFrame(tick);
+  }
+
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(load, 150); });
+  load(); requestAnimationFrame(tick);
+  // sicurezza: se l'iframe non risponde entro 12 s, togli comunque il loader
+  setTimeout(() => loader.classList.add('done'), 12000);
+})();
+</script>
+</body>
+</html>
